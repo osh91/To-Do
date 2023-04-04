@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'com.google.dagger.hilt.android'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -27,14 +29,16 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_9
+        targetCompatibility JavaVersion.VERSION_1_9
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
     buildFeatures {
+        dataBinding true
         compose true
+
     }
     composeOptions {
         kotlinCompilerExtensionVersion '1.2.0'
@@ -43,6 +47,9 @@ android {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
+    }
+    hilt {
+        enableAggregatingTask = true
     }
 }
 
@@ -60,4 +67,32 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
+
+    // Room component
+    def room_version = "2.5.1"
+
+    // Room database
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Kotlin Extensions and Coroutines support for Room
+    implementation "androidx.room:room-ktx:$room_version"
+
+    // Datastore Preferences
+//    implementation 'androidx.datastore:datastore-*:1.0.0'
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+
+    // Dagger - Hilt
+    implementation 'com.google.dagger:hilt-android:2.45'
+    annotationProcessor 'com.google.dagger:hilt-compiler:2.45'
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.5.1'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
+
+
 }
+//
+//kapt {
+//    correctErrorTypes true
+//}
