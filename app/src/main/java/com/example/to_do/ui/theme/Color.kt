@@ -19,6 +19,14 @@ val HighPriorityColor = Color(0xFFFF4646)
 val NonPriorityColor = Color(0xFFFFFFFF)
 
 // * Bestäm egen component färg genom att kalla egen variabel. Du kan bestämma vad som händer i light och dark teme
+val Colors.taskItemTextColor: Color
+    @Composable
+    get() = if (isLight) DarkGray else LightGray
+
+val Colors.taskItemBackgroundColor: Color
+    @Composable
+    get() = if (isLight) Color.White else DarkGray
+
 val Colors.fabBackgroundColor: Color
     @Composable
     get() = if (isLight) Teal200 else Purple700
