@@ -1,6 +1,7 @@
 package com.example.to_do.navigation
 
 import Screens
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
@@ -10,15 +11,23 @@ import com.example.to_do.navigation.destionations.taskComposable
 import com.example.to_do.util.Constants.LIST_SCREEN
 
 @Composable
-fun SetupNavigation(navController: NavHostController) {
-
+fun SetupNavigation(
+    navController: NavHostController
+) {
     val screen = remember(navController) {
-        Screens(navController = navController) // hämtar parametrar task , list
+        Screens(navController = navController)
     }
 
-    NavHost(navController = navController, startDestination = LIST_SCREEN) {
-        listComposable(navigateToTaskScreen = screen.task)
-        taskComposable(navigateToListScreen = screen.list)
+    NavHost(
+        navController = navController,
+        startDestination = LIST_SCREEN
+    ) {
+        Log.d("Navigation", "SetUpNavigation called")
+        listComposable(
+            navigateToTaskScreen = screen.task
+        )
+        taskComposable(
+            navigateToListScreen = screen.list
+        )
     }
-
 }
