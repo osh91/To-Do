@@ -18,18 +18,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.example.to_do.data.models.Priority
 import com.example.to_do.data.models.ToDoTask
 import com.example.to_do.ui.theme.*
+import com.example.to_do.util.RequestState
 
 @ExperimentalMaterialApi
 @Composable
 fun ListContent(
-    tasks: List<ToDoTask>, //Från databas table
+    tasks: RequestState<List<ToDoTask>>, //Från databas table
     navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
-    // Om det finns ingen task - items liksom todoz då ska den visa tomt-body component :3
-    if (tasks.isEmpty()) {
-        EmptyContent()
-    } else {
-        DisplayTasks(tasks = tasks, navigateToTaskScreen = navigateToTaskScreen)
+    if (tasks is RequestState.Success) {
+        // Om det finns ingen task - items liksom todoz då ska den visa tomt-body component :3
+        if (tasks.data.isEmpty()) {
+            EmptyContent()
+        } else {
+            DisplayTasks(tasks = tasks.data, navigateToTaskScreen = navigateToTaskScreen)
+        }
     }
 
 }
