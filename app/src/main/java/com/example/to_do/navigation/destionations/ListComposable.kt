@@ -6,10 +6,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.to_do.ui.screens.list.ListScreen
+import com.example.to_do.ui.viewmodel.ShareViewModel
 import com.example.to_do.util.Constants.LIST_ARGUMENT_KEY
 import com.example.to_do.util.Constants.LIST_SCREEN
 
-fun NavGraphBuilder.listComposable(navigateToTaskScreen: (taskId: Int) -> Unit) {
+fun NavGraphBuilder.listComposable(
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    shareViewModel: ShareViewModel
+) {
     Log.d("ListComposable", "ListComposable is called from SetupNavigation")
     composable(
         route = LIST_SCREEN,
@@ -17,7 +21,10 @@ fun NavGraphBuilder.listComposable(navigateToTaskScreen: (taskId: Int) -> Unit) 
             type = NavType.StringType
         })
     ) {
-        ListScreen(navigateToTaskScreen = navigateToTaskScreen)
+        ListScreen(
+            navigateToTaskScreen = navigateToTaskScreen,
+            shareViewModel = shareViewModel
+        )
         Log.d("ListScreen", "Calling to ListScreen from ListComposable")
     }
 }

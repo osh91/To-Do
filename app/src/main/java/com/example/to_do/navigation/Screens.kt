@@ -1,6 +1,5 @@
 import androidx.navigation.NavHostController
 import com.example.to_do.util.Action
-import com.example.to_do.util.Constants
 import com.example.to_do.util.Constants.LIST_SCREEN
 
 class Screens(navController: NavHostController) {
@@ -15,6 +14,7 @@ class Screens(navController: NavHostController) {
 
     val task: (Int) -> Unit = {
         // (Int) är taskId
-        taskId -> navController.navigate("task/$taskId")
+            taskId ->
+        navController.navigate("task/$taskId")
     }
 }

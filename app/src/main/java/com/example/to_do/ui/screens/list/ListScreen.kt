@@ -1,25 +1,36 @@
 package com.example.to_do.ui.screens.list
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.example.to_do.R
 import com.example.to_do.ui.theme.fabBackgroundColor
+import com.example.to_do.ui.viewmodel.ShareViewModel
+import com.example.to_do.util.SearchAppBarState
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ListScreen(
-    navigateToTaskScreen: (taskId: Int) -> Unit
+    navigateToTaskScreen: (taskId: Int) -> Unit,
+    shareViewModel: ShareViewModel
 ) {
-    Log.d("ListScreen", "Is called")
+
+    val searchAppBarState: SearchAppBarState by shareViewModel.searchAppBarState
+    val searchTextState: String by shareViewModel.searchTextState
+
     Scaffold(
-        topBar = { ListAppBar() },
+        topBar = {
+            ListAppBar(
+                sharedViewModel = shareViewModel,
+                searchAppBarState = searchAppBarState,
+                searchTextState = searchTextState
+            )
+        },
         content = {},
         floatingActionButton = {
             ListFab(onFabClicked = navigateToTaskScreen)
@@ -34,7 +45,6 @@ fun ListFab(
 ) {
     FloatingActionButton(
         onClick = {
-            Log.d("ListFab", "onFabClicked called")
             onFabClicked(-1) // från Screens task, där taskId, man bestämmer -1 är att öppna action button
         },
         backgroundColor = MaterialTheme.colors.fabBackgroundColor
@@ -45,10 +55,4 @@ fun ListFab(
             tint = Color.White
         )
     }
-}
-
-@Preview
-@Composable
-fun ListScreenPreview() {
-    ListScreen(navigateToTaskScreen = {})
 }
