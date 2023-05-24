@@ -31,6 +31,8 @@ fun ListScreen(
     val searchTextState: String by shareViewModel.searchTextState
     val allTasks by shareViewModel.allTasks.collectAsState()
 
+    val searchedTasks by shareViewModel.searchedTasks.collectAsState()
+
     val scaffoldState = rememberScaffoldState()
 
     DisplaySnackBar(
@@ -38,7 +40,11 @@ fun ListScreen(
         handleDatabaseActions = { shareViewModel.handleDatabaseActions(action = action) },
         taskTitle = shareViewModel.title.value,
         action = action,
+        onUndoClicked = {
+            shareViewModel.action.value = it
+        }
     )
+
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -49,8 +55,14 @@ fun ListScreen(
                 searchTextState = searchTextState
             )
         },
-        // content är kroppen - body till Scaffold
-        content = { ListContent(tasks = allTasks, navigateToTaskScreen = navigateToTaskScreen) },
+        content = {
+            ListContent(
+                allTasks = allTasks,
+                searchedTasks = searchedTasks,
+                searchAppBarState = searchAppBarState,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
+        },
         floatingActionButton = {
             ListFab(onFabClicked = navigateToTaskScreen)
         }
@@ -80,11 +92,10 @@ fun ListFab(
 fun DisplaySnackBar(
     scaffoldState: ScaffoldState,
     handleDatabaseActions: () -> Unit,
+    onUndoClicked: (Action) -> Unit,
     taskTitle: String,
     action: Action
 ) {
-    // för att unvika complex kod, istället skicka in shareViewModel räcker det att skriva funktion.
-    //Skriv en funktion och därefter skriv upp vad du ville göra med handleDatabaseAction() function.
     handleDatabaseActions()
 
     val scope = rememberCoroutineScope()
@@ -92,11 +103,45 @@ fun DisplaySnackBar(
         if (action != Action.NO_ACTION) {
             scope.launch {
                 val snackBarResult = scaffoldState.snackbarHostState.showSnackbar(
-                    message = "${action.name}: $taskTitle",
-                    actionLabel = "Ok"
+                    message = setMessage(action = action, taskTitle = taskTitle),
+                    actionLabel = setActionLabel(action = action)
+                )
+                undoDeletedTask(
+                    action = action,
+                    snackBarResult = snackBarResult,
+                    onUndoClicked = onUndoClicked
                 )
             }
         }
     }
-
 }
+
+
+private fun setMessage(action: Action, taskTitle: String): String {
+    return when (action) {
+        Action.DELETE_ALL -> "All Tasks Removed."
+        else -> "${action.name}: $taskTitle"
+    }
+}
+
+private fun setActionLabel(action: Action): String {
+    return if (action.name == "DELETE") {
+        "UNDO"
+    } else {
+        "OK"
+    }
+}
+
+private fun undoDeletedTask(
+    action: Action,
+    snackBarResult: SnackbarResult,
+    onUndoClicked: (Action) -> Unit
+) {
+    if (snackBarResult == SnackbarResult.ActionPerformed
+        && action == Action.DELETE
+    ) {
+        onUndoClicked(Action.UNDO)
+    }
+}
+
+

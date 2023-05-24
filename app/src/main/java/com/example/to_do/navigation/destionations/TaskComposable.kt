@@ -32,7 +32,10 @@ fun NavGraphBuilder.taskComposable(
         // ! selectedTask känner av det vilket id du väljer
         // sedan skickades det vidare till updateTaskFields
         LaunchedEffect(key1 = selectedTask) {
-            shareViewModel.updateTaskFields(selectedTask = selectedTask)
+            if (selectedTask != null || taskId == -1) {
+                shareViewModel.updateTaskFields(selectedTask = selectedTask)
+            }
+
         }
 
         TaskScreen(

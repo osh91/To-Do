@@ -39,6 +39,24 @@ class ShareViewModel @Inject constructor(private val repository: ToDoRepository)
 
     val searchTextState: MutableState<String> = mutableStateOf("")
 
+    private val _searchedTasks = MutableStateFlow<RequestState<List<ToDoTask>>>(RequestState.Idle)
+    val searchedTasks: StateFlow<RequestState<List<ToDoTask>>> = _searchedTasks
+
+    fun searchDatabase(searchQuery: String) {
+        _searchedTasks.value = RequestState.Loading
+        try {
+            viewModelScope.launch {
+                repository.searchDatabase(searchQuery = "%$searchQuery%")
+                    .collect { searchedTasks ->
+                        _searchedTasks.value = RequestState.Success(searchedTasks)
+                    }
+            }
+        } catch (e: Exception) {
+            _searchedTasks.value = RequestState.Error(e)
+        }
+        searchAppBarState.value = SearchAppBarState.TRIGGERED
+    }
+
     // tänk dig du har private String _foo = ""
     // den skapar variabel allTask och den är tomt från början, initialize empty list
     // ! Anropas RquestState för att det flickar lite pga Listan var empty, fin justrering
@@ -80,6 +98,13 @@ class ShareViewModel @Inject constructor(private val repository: ToDoRepository)
             )
             repository.addTask(toDoTask = toDoTask)
         }
+        searchAppBarState.value = SearchAppBarState.CLOSED
+    }
+
+    private fun deleteAllTasks() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllTasks()
+        }
     }
 
     fun handleDatabaseActions(action: Action) {
@@ -94,10 +119,10 @@ class ShareViewModel @Inject constructor(private val repository: ToDoRepository)
                 deleteTask()
             }
             Action.DELETE_ALL -> {
-
+                deleteAllTasks()
             }
             Action.UNDO -> {
-
+                addTask()
             }
             else -> {
 
