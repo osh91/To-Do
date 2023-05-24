@@ -17,8 +17,18 @@ import com.example.to_do.ui.theme.topAppBarContentColor
 import com.example.to_do.util.Action
 
 @Composable
-fun TaskAppBar(navigationToListScreens: (Action) -> Unit) {
-    NewTaskAppBar(navigationToListScreens = navigationToListScreens)
+fun TaskAppBar(
+    navigationToListScreens: (Action) -> Unit,
+    selectedTask: ToDoTask?,
+) {
+    if (selectedTask == null) {
+        NewTaskAppBar(navigationToListScreens = navigationToListScreens)
+    } else {
+        ExcitingTaskAppBar(
+            selectedTask = selectedTask,
+            navigationToListScreens = navigationToListScreens
+        )
+    }
 }
 
 @Composable
