@@ -24,7 +24,10 @@ fun NavGraphBuilder.taskComposable(
         })
     ) { navBackStackEntry ->
         val taskId = navBackStackEntry.arguments!!.getInt(TASK_ARGUMENT_KEY)
-        shareViewModel.getSelectedTask(taskId = taskId)
+        // you should always call LaunchEffect if you call id all the time , or else it will effect courutine
+        LaunchedEffect(key1 = taskId) {
+            shareViewModel.getSelectedTask(taskId = taskId)
+        }
 
         val selectedTask by shareViewModel.selectedTask.collectAsState()
 

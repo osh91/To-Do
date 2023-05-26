@@ -19,11 +19,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun ListScreen(
     navigateToTaskScreen: (taskId: Int) -> Unit,
-    shareViewModel: ShareViewModel
+    shareViewModel: ShareViewModel,
 ) {
     // * Hämtar ner datan, alla task för att du använder ViewModel-Flow
     LaunchedEffect(key1 = true) {
         shareViewModel.getAllTasks()
+        shareViewModel.readSortState()
     }
     val action by shareViewModel.action
 
@@ -32,8 +33,13 @@ fun ListScreen(
     val allTasks by shareViewModel.allTasks.collectAsState()
 
     val searchedTasks by shareViewModel.searchedTasks.collectAsState()
+    val sortState by shareViewModel.sortState.collectAsState()
 
     val scaffoldState = rememberScaffoldState()
+
+    // * PRIORITY
+    val lowPriorityTasks by shareViewModel.lowPriorityTasks.collectAsState()
+    val highPriorityTasks by shareViewModel.highPriorityTasks.collectAsState()
 
     DisplaySnackBar(
         scaffoldState = scaffoldState,
@@ -60,7 +66,10 @@ fun ListScreen(
                 allTasks = allTasks,
                 searchedTasks = searchedTasks,
                 searchAppBarState = searchAppBarState,
-                navigateToTaskScreen = navigateToTaskScreen
+                navigateToTaskScreen = navigateToTaskScreen,
+                lowPriorityTasks = lowPriorityTasks,
+                highPriorityTasks = highPriorityTasks,
+                sortState = sortState
             )
         },
         floatingActionButton = {
